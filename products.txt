@@ -1,0 +1,3 @@
+P101,Notebook,50
+P102,Pen,10
+P103,Bag,800
