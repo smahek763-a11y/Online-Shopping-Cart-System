@@ -1,117 +1,90 @@
-# Online-Shopping-Cart-System
 
-A menu-driven Java console application that simulates an online shopping cart. Products are loaded from a file into a HashMap, cart items are stored in a Linked List, the last added item can be removed using a Stack, and the cart can be sorted by item total and checked out.
 
-Built as a Data Structures and Algorithms (DSA) project at Rungta International Skills University.
+#  Online Shopping Cart System
 
-Features
+##  Project Overview
+The **Online Shopping Cart System** is a console-based Java application that allows users to manage products and perform basic shopping cart operations. It uses Java Collections Framework and File Handling to store product information, manage cart items, and save cart details.
 
-• View available products (sorted by product ID)
-• Add a product to the cart by ID and quantity (repeated adds of the same product are merged)
-• View the cart with item totals and the grand total
-• Remove the last added item (undo) using a Stack
-• Sort the cart by item total, high to low
-• Checkout, which shows the order, prints the total and clears the cart
-• Load products from products.txt at start and save the cart to cart.txt on exit
-• Input validation: unknown product IDs and non-positive or non-numeric quantities are rejected
+##  Project Objectives
+- Display available products.
+- Add products to the shopping cart.
+- View cart items and calculate the total price.
+- Remove the last added item using Stack.
+- Sort cart items by total price (High to Low).
+- Checkout and place an order.
+- Load product details from a file and save cart data on exit.
 
-Data Structures and Concepts
+##  Technologies Used
+- **Programming Language:** Java
+- **IDE:** Visual Studio Code
+- **Concepts:** Object-Oriented Programming, HashMap, LinkedList, Stack, Sorting, Methods, File Handling.
 
-Component
-Used for
-Where
-HashMap<String, Product>
-Product catalogue (product ID to name and price), O(1) average lookup
-products, loadProducts()
-LinkedList<CartItem>
-Items in the cart
-cart, addToCart(), viewCart()
-Stack<CartAction>
-History of additions so the last one can be undone (LIFO)
-history, removeLastItem()
-Sorting
-Cart ordered by item total (high to low); product IDs ordered for display
-sortCart(), viewProducts()
-File handling
-Read products.txt, write cart.txt
-loadProducts(), saveCart()
+##  Project Structure
 
-Classes
-
-All classes live in one file, OnlineShoppingCartSystem.java.
-
-Class
-Purpose
-Product
-One catalogue item: id, name, price
-CartItem
-One cart entry: productId, name, price, quantity; getTotal() returns price x quantity
-CartAction
-One recorded addition: productId, quantity; pushed on the Stack
-OnlineShoppingCartSystem
-Main class: holds the data structures, all menu methods and main()
-
-Methods
-
-Method
-Description
-loadProducts()
-Reads products.txt into the HashMap
-viewProducts()
-Prints products sorted by product ID
-addToCart()
-Validates ID and quantity, adds or updates a cart item, pushes the action on the Stack
-calculateTotal()
-Sums the totals of all cart items
-viewCart()
-Prints the cart and its total
-removeLastItem()
-Pops the Stack and reduces the quantity of the matching cart item (removes it at zero)
-sortCart()
-Sorts the cart by item total, high to low, and displays it
-checkout()
-Prints the order and total, then clears the cart and the Stack
-saveCart()
-Writes the cart to cart.txt
-main()
-Menu loop for options 1 to 7
-
-Getting Started
-
-Requirements
-
-• Java Development Kit (JDK 17 or later recommended)
-• A terminal, or an IDE such as VS Code, IntelliJ IDEA or Eclipse
-
-Project Files
-
-.
+```text
+Online-Shopping-Cart-System/
+│
 ├── OnlineShoppingCartSystem.java
 ├── products.txt
-└── README.md
+├── README.md
+├── Online_Shopping_Cart_System_Presentation.pptx
+└── Online_Shopping_Cart_System_Report.pdf
+```
 
-cart.txt is created automatically when you exit the program.
+##  Product Details
 
-products.txt format
+Products are loaded from `products.txt`.
 
-One product per line: ID,Name,Price
+| Product ID | Product Name | Price |
+|---|---|---:|
+| P101 | Notebook | 50 |
+| P102 | Pen | 10 |
+| P103 | Bag | 800 |
 
-P101,Notebook,50
-P102,Pen,10
-P103,Bag,800
+##  Features
 
-Compile and run
+1. **View Products:** Displays all available products with their IDs, names, and prices.
+2. **Add to Cart:** Adds products with the requested quantity and validates user input.
+3. **View Cart:** Displays cart items, quantities, individual totals, and the final amount.
+4. **Remove Last Added Item:** Uses Stack to undo the most recent cart addition.
+5. **Sort Cart:** Sorts products according to their total price in descending order.
+6. **Checkout:** Calculates the final bill and places the order.
+7. **File Handling:** Reads product details from `products.txt` and saves cart information to `cart.txt` when exiting.
 
-Run these from the folder that contains products.txt:
+##  How to Run the Project
 
+### Prerequisites
+- Java JDK installed.
+- Visual Studio Code installed.
+- Java Extension Pack installed in VS Code (recommended).
+
+### Steps
+
+1. Clone the repository:
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+```
+
+2. Open the project folder in VS Code.
+
+3. Open the terminal.
+
+4. Compile the Java program:
+
+```bash
 javac OnlineShoppingCartSystem.java
+```
+
+5. Run the application:
+
+```bash
 java OnlineShoppingCartSystem
+```
 
-Menu
+## 📋 Main Menu
 
-==================================
-     ONLINE SHOPPING CART SYSTEM
-==================================
+```text
 1. View Products
 2. Add to Cart
 3. View Cart
@@ -119,85 +92,39 @@ Menu
 5. Sort Cart (High to Low)
 6. Checkout
 7. Exit
-==================================
+```
 
-Sample Usage
+##  Test Cases
 
-Enter your choice: 2
-Enter Product ID: P101
-Enter Quantity: 2
-Added: Notebook x2 = 100
+| Test Case | Scenario | Expected Result |
+|---|---|---|
+| 1 | Add Notebook (P101), Quantity 2 | Added: Notebook x2 = 100 |
+| 2 | View an empty cart | Your cart is empty. Total: 0 |
+| 3 | Enter invalid Product ID P999 | Product P999 not found. |
+| 4 | Add Notebook x2 and Bag x1, sort and checkout | Sorted cart and Order placed. Total: 900 |
 
-Enter your choice: 2
-Enter Product ID: P103
-Enter Quantity: 1
-Added: Bag x1 = 800
+##  Concepts Implemented
 
-Enter your choice: 5
-Cart sorted by item total (High to Low).
-Product ID      Name            Price      Quantity   Total
-P103            Bag             800        1          800
-P101            Notebook        50         2          100
--------------------------------------
-Total: 900
+- **HashMap:** Stores product details using Product ID as the key.
+- **LinkedList:** Maintains shopping cart items.
+- **Stack:** Tracks cart additions to remove the most recently added quantity.
+- **Sorting:** Arranges cart items by their total price.
+- **File Handling:** Reads and writes product and cart information.
+- **Methods:** Divides the application into reusable functions.
 
-Enter your choice: 6
-Order placed. Total: 900
+##  Future Enhancements
+- Add user login and registration.
+- Implement product search functionality.
+- Add payment gateway integration.
+- Maintain order history.
+- Introduce a graphical user interface.
 
-Test Cases
+##  Author
+**Mahek Siddiqui**
 
-#
-Scenario
-Input
-Expected output
-1
-Normal input
-Option 2, product P101, quantity 2
-Added: Notebook x2 = 100
-2
-Boundary / minimum
-Option 3 with an empty cart
-Your cart is empty. and Total: 0
-3
-Invalid input
-Option 2, product P999
-Product P999 not found.
-4
-Different valid scenario
-Cart has Notebook x2; add P103 x1, then sort, then checkout
-Added: Bag x1 = 800, Bag listed before Notebook, Order placed. Total: 900
+**Project:** Online Shopping Cart System  
+**PS No.:** 11
 
-Time Complexity
+---
 
-Operation
-Complexity
-HashMap product lookup
-O(1) average
-Add new item at end of the linked list
-O(1)
-Search the cart for an existing product
-O(n)
-Stack push and pop
-O(1)
-View cart / calculate total
-O(n)
-Sort cart
-O(n log n)
-File load / save
-O(n)
-
-Here, n is the number of records being processed.
-
-Notes
-
-• Product IDs are not case-sensitive; input is converted to upper case.
-• The cart is saved to cart.txt on exit for record keeping; it is not reloaded the next time the program starts.
-• Checkout clears the cart and the undo history.
-
-Author
-
-Mahek Siddiqui
-B.Tech in Computer Science & Engineering (AI and ML, in association with Google)
-School of Computer Science and Engineering, Rungta International Skills University, Bhilai, Chhattisgarh
-
-Guided by Miss. Naina Singh | Course: Data Structures and Algorithms (DSA) | Session 2026-27
+ *This project demonstrates the practical implementation of Java programming, data structures, and file handling through a real-world shopping cart application.*
