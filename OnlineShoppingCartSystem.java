@@ -31,8 +31,8 @@ public class OnlineShoppingCartSystem {
             this.quantity = quantity;
         }
 
-        int getTotal() {
-            return price * quantity;
+        long getTotal() {
+            return (long) price * quantity;
         }
     }
 
@@ -69,7 +69,10 @@ public class OnlineShoppingCartSystem {
                     String name = data[1].trim();
                     int price = Integer.parseInt(data[2].trim());
 
-                    products.put(id, new Product(id, name, price));
+                    if (!id.isEmpty() && !name.isEmpty() && price >= 0) {
+                        products.put(id,
+                                new Product(id, name, price));
+                    }
                 }
             }
 
@@ -83,6 +86,7 @@ public class OnlineShoppingCartSystem {
     // Display available products
     static void viewProducts() {
         System.out.println("\n--------- AVAILABLE PRODUCTS ---------");
+
         System.out.printf("%-12s %-20s %s%n",
                 "Product ID", "Product Name", "Price");
 
@@ -91,6 +95,7 @@ public class OnlineShoppingCartSystem {
 
         for (String id : ids) {
             Product p = products.get(id);
+
             System.out.printf("%-12s %-20s %d%n",
                     p.id, p.name, p.price);
         }
@@ -113,17 +118,18 @@ public class OnlineShoppingCartSystem {
             quantity = Integer.parseInt(sc.nextLine().trim());
 
             if (quantity <= 0) {
-                System.out.println("Quantity must be a positive whole number.");
+                System.out.println(
+                        "Quantity must be a positive whole number.");
                 return;
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("Invalid quantity. Enter a whole number.");
+            System.out.println(
+                    "Invalid quantity. Enter a whole number.");
             return;
         }
 
         Product p = products.get(id);
-
         CartItem existing = null;
 
         for (CartItem item : cart) {
@@ -134,7 +140,13 @@ public class OnlineShoppingCartSystem {
         }
 
         if (existing != null) {
+            if (quantity > Integer.MAX_VALUE - existing.quantity) {
+                System.out.println("Quantity limit exceeded.");
+                return;
+            }
+
             existing.quantity += quantity;
+
         } else {
             cart.add(new CartItem(p, quantity));
         }
@@ -142,12 +154,12 @@ public class OnlineShoppingCartSystem {
         history.push(new CartAction(id, quantity));
 
         System.out.println("Added: " + p.name + " x" +
-                quantity + " = " + (p.price * quantity));
+                quantity + " = " + ((long) p.price * quantity));
     }
 
     // Calculate cart total
-    static int calculateTotal() {
-        int total = 0;
+    static long calculateTotal() {
+        long total = 0;
 
         for (CartItem item : cart) {
             total += item.getTotal();
@@ -198,30 +210,109 @@ public class OnlineShoppingCartSystem {
                     cart.remove(i);
                 }
 
-                System.out.println("Last added item removed successfully.");
+                System.out.println(
+                        "Last added item removed successfully.");
                 return;
             }
         }
     }
 
-    // Sort items by total price: high to low
+    // Merge Sort - Recursive division
+    static void mergeSort(ArrayList<CartItem> items,
+                          int left, int right) {
+
+        if (left < right) {
+
+            int mid = left + (right - left) / 2;
+
+            // Divide into two halves
+            mergeSort(items, left, mid);
+            mergeSort(items, mid + 1, right);
+
+            // Merge sorted halves
+            merge(items, left, mid, right);
+        }
+    }
+
+    // Merge two sorted halves in ascending order
+    static void merge(ArrayList<CartItem> items,
+                      int left, int mid, int right) {
+
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        CartItem[] L = new CartItem[n1];
+        CartItem[] R = new CartItem[n2];
+
+        // Copy left half
+        for (int i = 0; i < n1; i++) {
+            L[i] = items.get(left + i);
+        }
+
+        // Copy right half
+        for (int j = 0; j < n2; j++) {
+            R[j] = items.get(mid + 1 + j);
+        }
+
+        int i = 0;
+        int j = 0;
+        int k = left;
+
+        // Compare and merge in low-to-high order
+        while (i < n1 && j < n2) {
+
+            if (L[i].getTotal() <= R[j].getTotal()) {
+                items.set(k, L[i]);
+                i++;
+            } else {
+                items.set(k, R[j]);
+                j++;
+            }
+
+            k++;
+        }
+
+        // Copy remaining left elements
+        while (i < n1) {
+            items.set(k, L[i]);
+            i++;
+            k++;
+        }
+
+        // Copy remaining right elements
+        while (j < n2) {
+            items.set(k, R[j]);
+            j++;
+            k++;
+        }
+    }
+
+    // Sort cart using Merge Sort
     static void sortCart() {
         if (cart.isEmpty()) {
-            System.out.println("Cart is empty. Nothing to sort.");
+            System.out.println(
+                    "Cart is empty. Nothing to sort.");
             return;
         }
 
-        cart.sort((a, b) ->
-                Integer.compare(b.getTotal(), a.getTotal()));
+        ArrayList<CartItem> items = new ArrayList<>(cart);
 
-        System.out.println("\nCart sorted by item total (High to Low).");
+        mergeSort(items, 0, items.size() - 1);
+
+        cart.clear();
+        cart.addAll(items);
+
+        System.out.println(
+                "\nCart sorted using Merge Sort (Low to High).");
+
         viewCart();
     }
 
     // Checkout
     static void checkout() {
         if (cart.isEmpty()) {
-            System.out.println("Your cart is empty. Cannot checkout.");
+            System.out.println(
+                    "Your cart is empty. Cannot checkout.");
             return;
         }
 
@@ -232,7 +323,8 @@ public class OnlineShoppingCartSystem {
                     item.quantity + " = " + item.getTotal());
         }
 
-        System.out.println("Order placed. Total: " + calculateTotal());
+        System.out.println(
+                "Order placed. Total: " + calculateTotal());
 
         cart.clear();
         history.clear();
@@ -256,7 +348,8 @@ public class OnlineShoppingCartSystem {
             System.out.println("Cart data saved successfully.");
 
         } catch (IOException e) {
-            System.out.println("Error saving cart: " + e.getMessage());
+            System.out.println(
+                    "Error saving cart: " + e.getMessage());
         }
     }
 
@@ -266,7 +359,8 @@ public class OnlineShoppingCartSystem {
         loadProducts();
 
         if (products.isEmpty()) {
-            System.out.println("No products available. Check products.txt.");
+            System.out.println(
+                    "No products available. Check products.txt.");
             return;
         }
 
@@ -280,7 +374,7 @@ public class OnlineShoppingCartSystem {
             System.out.println("2. Add to Cart");
             System.out.println("3. View Cart");
             System.out.println("4. Remove Last Added Item");
-            System.out.println("5. Sort Cart (High to Low)");
+            System.out.println("5. Sort Cart (Low to High)");
             System.out.println("6. Checkout");
             System.out.println("7. Exit");
             System.out.println("==================================");
@@ -320,12 +414,14 @@ public class OnlineShoppingCartSystem {
                         break;
 
                     default:
-                        System.out.println("Invalid choice. Try again.");
+                        System.out.println(
+                                "Invalid choice. Try again.");
                 }
 
             } catch (NumberFormatException e) {
                 choice = 0;
-                System.out.println("Please enter a valid menu number.");
+                System.out.println(
+                        "Please enter a valid menu number.");
             }
 
         } while (choice != 7);
@@ -333,4 +429,3 @@ public class OnlineShoppingCartSystem {
         sc.close();
     }
 }
-
